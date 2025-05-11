@@ -8,4 +8,6 @@ const emergencyAlertSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now }
   });
   const EmergencyAlert = mongoose.model("EmergencyAlert", emergencyAlertSchema);
+
+module.exports = EmergencyAlert;
   

@@ -37,14 +37,15 @@ router.post("/login", async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    console.log(user)
 
     res.json({ 
-      token, 
       user: { 
         id: user._id, 
         name: user.name, 
         email: user.email,
-        profile_pic: user.profile_pic
+        profile_pic: user.profile_pic,
+        token:token
       } 
     });
   } catch (error) {
@@ -53,9 +54,16 @@ router.post("/login", async (req, res) => {
 });
 
 // Get Profile
-router.get("/profile", authMiddleware, async (req, res) => {
+router.get("/profile/:userId", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("-password");
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -63,7 +71,12 @@ router.get("/profile", authMiddleware, async (req, res) => {
 });
 
 // Update Profile (now accepts Cloudinary URL from frontend)
-router.put("/profile/edit", authMiddleware, async (req, res) => {
+router.put("/profile/edit/:userId", authMiddleware, async (req, res) => {
+
+  const { userId } = req.params;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
   try {
     const { 
       name, 
@@ -80,7 +93,7 @@ router.put("/profile/edit", authMiddleware, async (req, res) => {
     } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.userId,
+      userId, 
       { 
         name, 
         bio, 

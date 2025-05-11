@@ -6,3 +6,5 @@ const symptomSchema = new mongoose.Schema({
     conditions: [{ type: String, required: true }]
   });
   const Symptom = mongoose.model("Symptom", symptomSchema);
+  
+  module.exports = Symptom
