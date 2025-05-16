@@ -9,6 +9,8 @@ const authRoutes = require("./routes/auth");
 const symptomRoutes = require("./routes/symptoms");
 const alertRoutes = require("./routes/emergency-alert");
 const doctorRoutes = require("./routes/doctors");
+const appointmentRoutes = require("./routes/appointments");
+
 
 
 dotenv.config();
@@ -20,7 +22,7 @@ dotenv.config();
 // }));
 
 // Cloudinary configuration
-cloudinary.config({ 
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
@@ -34,24 +36,26 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err));
+    .then(() => console.log("MongoDB Connected"))
+    .catch(err => console.log(err));
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/symptoms", symptomRoutes);
 app.use("/api/emergency-alert", alertRoutes);
 app.use("/api/doctors", doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
-//previous code 
+//previous code
 
 // const express = require("express");
 // const mongoose = require("mongoose");
@@ -86,7 +90,7 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // //   secret: process.env.SESSION_SECRET,
 // //   resave: false,
 // //   saveUninitialized: true,
-// //   cookie: { secure: false } 
+// //   cookie: { secure: false }
 // // }));
 
 // // Connect to MongoDB
